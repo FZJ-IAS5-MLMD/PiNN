@@ -1,0 +1,188 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Tutorial &#8212; mdppp v0.0 documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Avaiable recipes" href="recipes.html" />
+    <link rel="prev" title="Introduction" href="index.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="recipes.html" title="Avaiable recipes"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Introduction"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">mdppp v0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recipes.html">Avaiable recipes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="tutorial">
+<h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<p>The following tutorial explains basic concepts in mdppp with an
+example of velocity autocorrelation function.</p>
+<div class="section" id="framedata">
+<h2>FrameData<a class="headerlink" href="#framedata" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">FrameData</span></code> is the abstraction of a trajectory, or in general, a
+collection of framewise arrays that can be loaded (at least)
+iteratively. “Children” of <code class="docutils literal notranslate"><span class="pre">FrameData</span></code> are called <code class="docutils literal notranslate"><span class="pre">FrameArray</span></code>s,
+which will be elaborated below.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdppp.io</span> <span class="kn">import</span> <span class="n">load_multi_dump</span>
+<span class="kn">from</span> <span class="nn">mdppp.ops</span> <span class="kn">import</span> <span class="n">tacf</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">load_multi_dump</span><span class="p">([</span><span class="s1">&#39;prod.dump&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;speed&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="framearray">
+<h2>FrameArray<a class="headerlink" href="#framearray" title="Permalink to this headline">¶</a></h2>
+<p>A <code class="docutils literal notranslate"><span class="pre">FrameArray</span></code> means a numpy-array-like data structure which is
+updated whenever a <code class="docutils literal notranslate"><span class="pre">FrameData</span></code> (called its parent) is updated.
+For instance, the values in the <code class="docutils literal notranslate"><span class="pre">FrameData</span></code> are <code class="docutils literal notranslate"><span class="pre">FrameArray</span></code>s.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">FrameArray</span></code> behaves much like a numpy array, with the exception
+that its mathematical operations procudes <code class="docutils literal notranslate"><span class="pre">FrameArray</span></code>s (also
+updated according to the udpated value of itself every frame).</p>
+<p>The actual value of a <code class="docutils literal notranslate"><span class="pre">FrameArray</span></code> can be retrieved with
+<code class="docutils literal notranslate"><span class="pre">.eval()</span></code> method.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">v</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;speed&#39;</span><span class="p">]</span>
+<span class="n">sin_v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">eval</span><span class="p">(),</span> <span class="n">sin_v</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="section" id="subclasses-of-framearray">
+<h3>Subclasses of FrameArray<a class="headerlink" href="#subclasses-of-framearray" title="Permalink to this headline">¶</a></h3>
+<p>The static analysis of structures can often be represented as
+operations of <code class="docutils literal notranslate"><span class="pre">FrameArray</span></code>, which performs the same operation to
+each frame.</p>
+<p>However, analysis of trajectories often involve time correlatoins (for
+instance, the time average of a <code class="docutils literal notranslate"><span class="pre">FrameArray</span></code> or its auto-correlation
+function). Those analysis requires subclasses of <code class="docutils literal notranslate"><span class="pre">FrameArray</span></code> which
+behaves just like <code class="docutils literal notranslate"><span class="pre">FrameArray</span></code> but are updated different when new
+frame is loaded.</p>
+<p>Some of the subclasses are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">UnwrappedCoord</span></code>: unwrapped positions of atoms</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TCACHE</span></code>: cached <code class="docutils literal notranslate"><span class="pre">FrameArray</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TAVG</span></code>: time average of <code class="docutils literal notranslate"><span class="pre">FrameArray</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="operations">
+<h3>Operations<a class="headerlink" href="#operations" title="Permalink to this headline">¶</a></h3>
+<p>Most analysis tasks can be composed of a small number of common
+operations. Those operations are implemented in mdppp and used to
+write most of the recipes.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mdppp.ops</span> <span class="kn">import</span> <span class="n">tcache</span><span class="p">,</span> <span class="n">tavg</span>
+<span class="n">v_cache</span> <span class="o">=</span> <span class="n">tcache</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">v_avg</span> <span class="o">=</span> <span class="n">tavg</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">eval</span><span class="p">(),</span> <span class="n">cache_v</span><span class="o">.</span><span class="n">eval</span><span class="p">(),</span> <span class="n">v_avg</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Although subclassing FrameArray provides great flexibility, it is
+recommanded to write new operations and recipes with existing
+operations instead of creating new subclass for each operation. For
+instance, a (simplified) time-autocorrelation function is just a
+combination of tcache and tavg.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">tacf</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">):</span>
+    <span class="n">var_cache</span> <span class="o">=</span> <span class="n">tcache</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">)</span>
+    <span class="n">acf</span> <span class="o">=</span> <span class="n">var_cache</span> <span class="o">*</span> <span class="n">var</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">acf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">acf</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">tacf</span> <span class="o">=</span> <span class="n">tavg</span><span class="p">(</span><span class="n">acf</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tacf</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="example-computing-vacf">
+<h2>Example: computing VACF<a class="headerlink" href="#example-computing-vacf" title="Permalink to this headline">¶</a></h2>
+<p>The following script calculates the velocity autocorrelation function with
+a time window of 50 frames, on segments of 100 frames.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="n">vacf</span> <span class="o">=</span> <span class="n">tacf</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">vacf</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="recipes.html" title="Avaiable recipes"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Introduction"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">mdppp v0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Yunqi Shao.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+    </div>
+  </body>
+</html>

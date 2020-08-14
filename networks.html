@@ -1,0 +1,178 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Networks &#8212; PiNN  documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="PiNet" href="networks/pinet.html" />
+    <link rel="prev" title="Implemented loaders" href="datasets/implemented.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="networks/pinet.html" title="PiNet"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="datasets/implemented.html" title="Implemented loaders"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">PiNN  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Networks</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="networks">
+<h1>Networks<a class="headerlink" href="#networks" title="Permalink to this headline">¶</a></h1>
+<p>In PiNN, a “network” is a function with learnable parameters, which
+yields atomic predictions from a structure, e.g. the <code class="docutils literal notranslate"><span class="pre">coord</span></code> and
+<code class="docutils literal notranslate"><span class="pre">elems</span></code>.</p>
+<div class="section" id="structures-of-ann">
+<h2>Structures of ANN<a class="headerlink" href="#structures-of-ann" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The current section explains how PiNN represents atomic
+neural networks in TensorFlow. This should be helpful if you are
+trying to modify or create a neural network. But you might not need
+to read this if you just want to use one of our implemented
+networks. In that case, you could jump to <a class="reference internal" href="#implemented-networks">Implemented networks</a>.</p>
+</div>
+<div class="figure align-center" id="id1">
+<a class="reference internal image-reference" href="_images/networks.png"><img alt="_images/networks.png" src="_images/networks.png" style="width: 400px;" /></a>
+<p class="caption"><span class="caption-text">Fig. Schematic illustration of different ANN structures</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+<p>As shown in the illustration, most operations of the atomic neural
+networks are arithmetic operations or feed-forward neural networks for
+atomic properties or interactions. Those operations can be easily
+represented using TensorFlow operations. However, the pairwise(or
+triple-wise) interactions and the interaction pooling operations
+involve the communication between atoms and their neighbors, which
+required special treatments.</p>
+</div>
+<div class="section" id="pinn-s-representation-of-anns">
+<h2>PiNN’s representation of ANNs<a class="headerlink" href="#pinn-s-representation-of-anns" title="Permalink to this headline">¶</a></h2>
+<p>In PiNN, the interactions are represented as sparse slices of the
+non-zero values in the <span class="math notranslate nohighlight">\(\vec{I_{ij}}\)</span> tensor (a n_nodes vector
+for each pair of atoms). A <code class="docutils literal notranslate"><span class="pre">(n_pairs,</span> <span class="pre">2)</span></code> tensor named as <code class="docutils literal notranslate"><span class="pre">ind_2</span></code>
+is used to index the pair. The pairwise interaction and interaction
+pooling are then done with TensorFlow’s <code class="docutils literal notranslate"><span class="pre">gather_nd</span></code> and
+<code class="docutils literal notranslate"><span class="pre">unsorted_segment_sum</span></code> operations. Notably, PiNN provides a neighbor
+list layer to get <code class="docutils literal notranslate"><span class="pre">ind_2</span></code>, the <code class="docutils literal notranslate"><span class="pre">pinn.layers.cell_list_nl</span></code> layer
+implements a cell lists algorithm which produces the <code class="docutils literal notranslate"><span class="pre">ind_2</span></code> tensor
+as well as the pairwise distances and displacements tensors.</p>
+<p>Similarly, a <code class="docutils literal notranslate"><span class="pre">(n_atoms,</span> <span class="pre">1)</span></code> tensor named as <code class="docutils literal notranslate"><span class="pre">ind_1</span></code> is used to
+index each atom’s position in a batch. And as is done in BPNN, a
+<code class="docutils literal notranslate"><span class="pre">(n_triplet,</span> <span class="pre">2)</span></code> tensor named as <code class="docutils literal notranslate"><span class="pre">ind_3</span></code> is used to index each
+triplet with two pairs sharing the same central atom.</p>
+<p>You can find a demonstration about building an atomic neural network
+with PiNN in this <a class="reference internal" href="notebooks/Writing_a_network.html"><span class="doc">notebook</span></a>.</p>
+</div>
+<div class="section" id="implemented-networks">
+<h2>Implemented networks<a class="headerlink" href="#implemented-networks" title="Permalink to this headline">¶</a></h2>
+<p>Two networks are currently implemented in PiNN.  Their parameters can
+be found in the API reference below:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="networks/pinet.html">PiNet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="networks/bpnn.html">BPNN</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Networks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#structures-of-ann">Structures of ANN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pinn-s-representation-of-anns">PiNN’s representation of ANNs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#implemented-networks">Implemented networks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ase.html">ASE interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks.html">Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="misc.html">Miscellaneous Notes</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="networks/pinet.html" title="PiNet"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="datasets/implemented.html" title="Implemented loaders"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">PiNN  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Networks</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Yunqi Shao.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
+    </div>
+  </body>
+</html>

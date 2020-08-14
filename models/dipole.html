@@ -1,0 +1,173 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dipole model &#8212; PiNN  documentation</title>
+    <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ASE interface" href="../ase.html" />
+    <link rel="prev" title="Potential model" href="potential.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../ase.html" title="ASE interface"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="potential.html" title="Potential model"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PiNN  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../models.html" accesskey="U">Models</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Dipole model</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="dipole-model">
+<h1>Dipole model<a class="headerlink" href="#dipole-model" title="Permalink to this headline">¶</a></h1>
+<p>The dipole model requires the same dictionary as input as the potential model.
+The only difference is the <code class="docutils literal notranslate"><span class="pre">model_params</span></code> that can be set. They are listed below
+along with their default values.</p>
+<div class="section" id="model-params">
+<h2>model_params<a class="headerlink" href="#model-params" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">### Scaling and units</span>
+<span class="c1"># The loss function will be MSE((pred - label) * scale)</span>
+<span class="c1"># For vector/tensor predictions</span>
+<span class="c1"># the error will be pre-component instead of per-atom</span>
+<span class="c1"># d_unit is the unit of dipole to report w.r.t the input labels</span>
+<span class="s1">&#39;d_scale&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="c1"># dipole scale for prediction</span>
+<span class="s1">&#39;d_unit&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># output unit of dipole during prediction</span>
+<span class="c1">### Loss function options</span>
+<span class="s1">&#39;max_dipole&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>     <span class="c1"># if set to float, omit dipoles larger than it</span>
+<span class="s1">&#39;use_d_per_atom&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="c1"># use d_per_atom to calculate d_loss</span>
+<span class="s1">&#39;use_d_per_sqrt&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="c1">#</span>
+<span class="s1">&#39;log_d_per_atom&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="c1"># log d_per_atom and its distribution</span>
+                         <span class="c1"># ^- this is forcely done if use_d_per_atom</span>
+<span class="s1">&#39;use_d_weight&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>   <span class="c1"># scales the loss according to d_weight</span>
+<span class="s1">&#39;use_l2&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>         <span class="c1"># L2 regularization</span>
+<span class="c1">### Loss function multipliers</span>
+<span class="s1">&#39;d_loss_multiplier&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+<span class="s1">&#39;l2_loss_multiplier&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+<span class="c1">### Optimizer related</span>
+<span class="s1">&#39;learning_rate&#39;</span><span class="p">:</span> <span class="mf">3e-4</span><span class="p">,</span>   <span class="c1"># Learning rate</span>
+<span class="s1">&#39;use_norm_clip&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>   <span class="c1"># see tf.clip_by_global_norm</span>
+<span class="s1">&#39;norm_clip&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>       <span class="c1"># see tf.clip_by_global_norm</span>
+<span class="s1">&#39;use_decay&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>       <span class="c1"># Exponential decay</span>
+<span class="s1">&#39;decay_step&#39;</span><span class="p">:</span><span class="mi">10000</span><span class="p">,</span>      <span class="c1"># every ? steps</span>
+<span class="s1">&#39;decay_rate&#39;</span><span class="p">:</span><span class="mf">0.999</span><span class="p">,</span>      <span class="c1"># scale by ?</span>
+</pre></div>
+</div>
+<p>Just like the <code class="docutils literal notranslate"><span class="pre">potential_model</span></code>, <code class="docutils literal notranslate"><span class="pre">dipole_model</span></code> automatically saves <code class="docutils literal notranslate"><span class="pre">params</span></code>
+in a <code class="docutils literal notranslate"><span class="pre">params.yml</span></code> file during the creation of the <code class="docutils literal notranslate"><span class="pre">estimator</span></code>. The dipole model
+can then be invoked using <code class="docutils literal notranslate"><span class="pre">dipole_model('/path/to/model/')</span></code>.</p>
+</div>
+<div class="section" id="dipole-model-as-a-ase-calculator">
+<h2>Dipole model as a ASE calculator<a class="headerlink" href="#dipole-model-as-a-ase-calculator" title="Permalink to this headline">¶</a></h2>
+<p>A calculator can be created to use the dipole model to predict dipole moment and
+atomic charges in the following manner:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pinn.models</span> <span class="kn">import</span> <span class="n">dipole_model</span>
+<span class="kn">from</span> <span class="nn">pinn.calculator</span> <span class="kn">import</span> <span class="n">PiNN_cal</span>
+<span class="n">calc</span> <span class="o">=</span> <span class="n">PiNN_calc</span><span class="p">(</span><span class="n">dipole_model</span><span class="p">(</span><span class="s1">&#39;/path/to/model/&#39;</span><span class="p">),</span> <span class="n">properties</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;dipole&#39;</span><span class="p">,</span> <span class="s1">&#39;charges&#39;</span><span class="p">])</span>
+<span class="n">dipole_moment</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">get_dipole_moment</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+<span class="n">charges</span> <span class="o">=</span> <span class="n">calc</span><span class="o">.</span><span class="n">get_charges</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../networks.html">Networks</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../models.html">Models</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../models.html#write-a-model">Write a model</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../models.html#implemented-models">Implemented models</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ase.html">ASE interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks.html">Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc.html">Miscellaneous Notes</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../ase.html" title="ASE interface"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="potential.html" title="Potential model"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PiNN  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../models.html" >Models</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Dipole model</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Yunqi Shao.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
+    </div>
+  </body>
+</html>

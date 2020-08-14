@@ -1,0 +1,211 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Manipulating datasets &#8212; PiNN  documentation</title>
+    <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Implemented loaders" href="implemented.html" />
+    <link rel="prev" title="Loading data" href="load_data.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="implemented.html" title="Implemented loaders"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="load_data.html" title="Loading data"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PiNN  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../datasets.html" accesskey="U">Datasets</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../datasets.html">Datasets</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="load_data.html">Loading data</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Manipulating datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="implemented.html">Implemented loaders</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../networks.html">Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ase.html">ASE interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks.html">Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc.html">Miscellaneous Notes</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="manipulating-datasets">
+<h1>Manipulating datasets<a class="headerlink" href="#manipulating-datasets" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="batching-the-dataset">
+<h2>Batching the dataset<a class="headerlink" href="#batching-the-dataset" title="Permalink to this headline">¶</a></h2>
+<p>Most TensorFlow operations (caching, repeating, shuffling) can be
+directly applied to the dataset. However, to handle datasets with
+different numbers of atoms in each structure, which is often the case,
+we use a special <code class="docutils literal notranslate"><span class="pre">sparse_batch</span></code> operation to create minibatches of
+the data in a sparse form. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pinn.io</span> <span class="kn">import</span> <span class="n">sparse_batch</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="c1"># Load some dataset here</span>
+<span class="n">batched</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">sparse_batch</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="section" id="api-reference">
+<h3>API reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="pinn.io.sparse_batch">
+<code class="sig-prename descclassname">pinn.io.</code><code class="sig-name descname">sparse_batch</code><span class="sig-paren">(</span><em class="sig-param">batch_size, drop_remainder=False, num_parallel_calls=8, atomic_props=['f_data', 'q_data', 'f_weights']</em><span class="sig-paren">)</span><a class="headerlink" href="#pinn.io.sparse_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>This returns a dataset operation that transforms single samples
+into sparse batched samples. The atomic_props must include all
+properties that are defined on an atomic basis besides ‘coord’ and
+‘elems’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>drop_remainder</strong> (<em>bool</em>) – option for padded_batch</p></li>
+<li><p><strong>num_parallel_calls</strong> (<em>int</em>) – option for map</p></li>
+<li><p><strong>atomic_props</strong> (<em>list</em>) – list of atomic properties</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="tfrecord">
+<h2>TFRecord<a class="headerlink" href="#tfrecord" title="Permalink to this headline">¶</a></h2>
+<p>The tfrecord format is a serialized format for efficient data reading
+in TensorFlow. The format is especially useful for streaming the data
+over a network. It can also be used for caching preprocessed data.</p>
+<p>The tfrecord writer/loader also supports batched and preprocessed
+datasets. When writing the dataset, a .yml file records the data
+structure of the dataset, and a .tfr file holds the data. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">from</span> <span class="nn">pinn.io</span> <span class="kn">import</span> <span class="n">load_QM9</span><span class="p">,</span> <span class="n">sparse_batch</span>
+<span class="kn">from</span> <span class="nn">pinn.io</span> <span class="kn">import</span> <span class="n">write_tfrecord</span><span class="p">,</span> <span class="n">load_tfrecord</span>
+<span class="c1"># Load QM9 dataset</span>
+<span class="n">filelist</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="s1">&#39;/home/yunqi/datasets/QM9/dsgdb9nsd/*.xyz&#39;</span><span class="p">)</span>
+<span class="n">train_set</span> <span class="o">=</span> <span class="n">load_QM9</span><span class="p">(</span><span class="n">filelist</span><span class="p">)[</span><span class="s1">&#39;train&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">sparse_batch</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="c1"># Write as tfrecord and read</span>
+<span class="n">write_tfrecord</span><span class="p">(</span><span class="s1">&#39;train.yml&#39;</span><span class="p">,</span> <span class="n">train_set</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">load_tfrecord</span><span class="p">(</span><span class="s1">&#39;train.yml&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The training set will be saved in the <code class="docutils literal notranslate"><span class="pre">train.tfr</span></code>, while
+<code class="docutils literal notranslate"><span class="pre">train.yml</span></code> holds the information about the data structure.</p>
+<div class="section" id="id1">
+<h3>API reference<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="pinn.io.write_tfrecord">
+<code class="sig-prename descclassname">pinn.io.</code><code class="sig-name descname">write_tfrecord</code><span class="sig-paren">(</span><em class="sig-param">fname</em>, <em class="sig-param">dataset</em>, <em class="sig-param">log_every=100</em>, <em class="sig-param">pre_fn=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pinn.io.write_tfrecord" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to convert dataset object into tfrecord file.</p>
+<p>fname must end with .yml or .yaml.
+The data will be written in a .tfr file with the same suffix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> (<em>Dataset</em>) – input dataset.</p></li>
+<li><p><strong>fname</strong> (<em>str</em>) – filename of the dataset to be saved.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pinn.io.load_tfrecord">
+<code class="sig-prename descclassname">pinn.io.</code><code class="sig-name descname">load_tfrecord</code><span class="sig-paren">(</span><em class="sig-param">fname</em><span class="sig-paren">)</span><a class="headerlink" href="#pinn.io.load_tfrecord" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load tfrecord dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fname</strong> (<em>str</em>) – filename of the .yml metadata file to be loaded.</p></li>
+<li><p><strong>dtypes</strong> (<em>dict</em>) – dtype of dataset.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="implemented.html" title="Implemented loaders"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="load_data.html" title="Loading data"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PiNN  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../datasets.html" >Datasets</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Yunqi Shao.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
+    </div>
+  </body>
+</html>

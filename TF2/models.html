@@ -1,0 +1,150 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Models &#8212; PiNN  documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Potential model" href="models/potential.html" />
+    <link rel="prev" title="BPNN" href="networks/bpnn.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="models/potential.html" title="Potential model"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="networks/bpnn.html" title="BPNN"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">PiNN  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="networks.html">Networks</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#write-a-model">Write a model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#implemented-models">Implemented models</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ase.html">ASE interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks.html">Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="misc.html">Miscellaneous Notes</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="models">
+<h1>Models<a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="write-a-model">
+<h2>Write a model<a class="headerlink" href="#write-a-model" title="Permalink to this headline">¶</a></h2>
+<p>A model in PiNN refers to an <code class="docutils literal notranslate"><span class="pre">estimator</span></code> in TensorFlow. In fact, the
+<code class="docutils literal notranslate"><span class="pre">pinn.models.potential_model</span></code> function is just a shortcut to use
+tf.estimtor.Estimator.  The <code class="docutils literal notranslate"><span class="pre">estimator</span></code> is specified with a
+<code class="docutils literal notranslate"><span class="pre">model_fn</span></code> function. The <code class="docutils literal notranslate"><span class="pre">model_fn</span></code> takes the tensors from the
+dataset as input, and should return the training, evaluation or
+prediction <code class="docutils literal notranslate"><span class="pre">EstimatorSpec</span></code> according to the <code class="docutils literal notranslate"><span class="pre">mode</span></code> option.</p>
+<p>As in the PiNN code, <code class="docutils literal notranslate"><span class="pre">model_fn</span></code> is decoupled from <code class="docutils literal notranslate"><span class="pre">network_fn</span></code>:
+the “network” cares only about making a prediction for each atom,
+while the “model” defines the rest. The advantage of this approach is
+that a <code class="docutils literal notranslate"><span class="pre">model_fn</span></code> can be reused for any <code class="docutils literal notranslate"><span class="pre">network_fn</span></code>, and vice
+versa.</p>
+<p>If you are interested in modifying the <code class="docutils literal notranslate"><span class="pre">model_fn</span></code>, you might need to
+look into the source code of <code class="docutils literal notranslate"><span class="pre">pinn.models</span></code>. So far, the only models
+implemented in PiNN are the potential model and the dipole model. They
+define various metrics and loss functions used in training. They also
+interface with the ASE calculator, where the potential model predicts
+the forces and stresses using the analytical gradients of the
+potential energy. The dipole model predicts dipole moment, and can
+also predict atomic charges.</p>
+</div>
+<div class="section" id="implemented-models">
+<h2>Implemented models<a class="headerlink" href="#implemented-models" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="models/potential.html">Potential model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models/dipole.html">Dipole model</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="models/potential.html" title="Potential model"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="networks/bpnn.html" title="BPNN"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">PiNN  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Yunqi Shao.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
+    </div>
+  </body>
+</html>

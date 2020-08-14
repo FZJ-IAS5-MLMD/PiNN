@@ -1,0 +1,250 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Implemented loaders &#8212; PiNN  documentation</title>
+    <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Networks" href="../networks.html" />
+    <link rel="prev" title="Manipulating datasets" href="manipulate_data.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../networks.html" title="Networks"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="manipulate_data.html" title="Manipulating datasets"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PiNN  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../datasets.html" accesskey="U">Datasets</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Implemented loaders</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="implemented-loaders">
+<h1>Implemented loaders<a class="headerlink" href="#implemented-loaders" title="Permalink to this headline">¶</a></h1>
+<p>For some commonly used datasets, we provide the function to directly
+load the dataset. The loaders might be limited by IO, but if you have
+enough memory, you can simply cache the dataset with
+<code class="docutils literal notranslate"><span class="pre">dataset.cache()</span></code> or convert them to tfrecords.</p>
+<div class="section" id="the-runner-format">
+<h2>The RuNNer format<a class="headerlink" href="#the-runner-format" title="Permalink to this headline">¶</a></h2>
+<p>RuNNer data (used by the RuNNer code:
+<a class="reference external" href="http://www.uni-goettingen.de/en/560580.html">http://www.uni-goettingen.de/en/560580.html</a>) has the format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">begin</span>
+<span class="n">lattice</span> <span class="nb">float</span> <span class="nb">float</span> <span class="nb">float</span>
+<span class="n">lattice</span> <span class="nb">float</span> <span class="nb">float</span> <span class="nb">float</span>
+<span class="n">lattice</span> <span class="nb">float</span> <span class="nb">float</span> <span class="nb">float</span>
+<span class="n">atom</span> <span class="n">floatcoordx</span> <span class="n">floatcoordy</span> <span class="n">floatcoordz</span> <span class="n">int_atom_symbol</span> <span class="n">floatq</span> <span class="mi">0</span>  <span class="n">floatforcex</span> <span class="n">floatforcey</span> <span class="n">floatforcez</span>
+<span class="n">atom</span> <span class="mi">1</span>           <span class="mi">2</span>           <span class="mi">3</span>           <span class="mi">4</span>               <span class="mi">5</span>      <span class="mi">6</span>  <span class="mi">7</span>           <span class="mi">8</span>           <span class="mi">9</span>
+<span class="n">energy</span> <span class="nb">float</span>
+<span class="n">charge</span> <span class="nb">float</span>
+<span class="n">comment</span> <span class="n">arbitrary</span> <span class="n">string</span>
+<span class="n">end</span>
+</pre></div>
+</div>
+<p>The order of the lines within the begin/end block are arbitrary.
+Coordinates, charges, energies and forces are all in atomic units.</p>
+<dl class="py function">
+<dt id="pinn.io.load_runner">
+<code class="sig-prename descclassname">pinn.io.</code><code class="sig-name descname">load_runner</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">flist</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pinn.io.load_runner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads runner formatted trajectory</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flist</strong> (<em>str</em>) – one or a list of runner formatted trajectory(s)</p></li>
+<li><p><strong>**kwargs</strong> – split options, see <code class="docutils literal notranslate"><span class="pre">pinn.io.base.split_list</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="the-cp2k-format">
+<h2>The CP2K format<a class="headerlink" href="#the-cp2k-format" title="Permalink to this headline">¶</a></h2>
+<p>Loads output from CP2K. This loader expects coordinates, forces, energy
+and cell outputs in respective output files.</p>
+<dl class="py function">
+<dt id="pinn.io.load_cp2k">
+<code class="sig-prename descclassname">pinn.io.</code><code class="sig-name descname">load_cp2k</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">coord_file</span></em>, <em class="sig-param"><span class="n">force_file</span></em>, <em class="sig-param"><span class="n">ener_file</span></em>, <em class="sig-param"><span class="n">cell_file</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pinn.io.load_cp2k" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads CP2K formatted trajectories</p>
+<p>CP2K outputs the coord, force, energy and cell in separate files.
+It is assumed that different files come in consistent units (no
+unit conversion is done in the loader).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coord_file</strong> – one or a list of CP2K .xyz files for coordinates</p></li>
+<li><p><strong>force_file</strong> – one or a list of CP2K .xyz files for forces</p></li>
+<li><p><strong>ener_file</strong> – one or a list of CP2K .ener files</p></li>
+<li><p><strong>cell_file</strong> – one or a list of CP2K .cell files</p></li>
+<li><p><strong>**kwargs</strong> – split options, see <code class="docutils literal notranslate"><span class="pre">pinn.io.base.split_list</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="qm9-dataset">
+<h2>QM9 dataset<a class="headerlink" href="#qm9-dataset" title="Permalink to this headline">¶</a></h2>
+<p>The QM9 dataset includes many computed properties for 134K stable
+organic molecules.  See
+ref. <a class="bibtex reference internal" href="../reference.html#ramakrishnan-dral-dral-rupp-anatole-von-lilienfeld-2017" id="id1">[1]</a>
+for more details.</p>
+<p>The default behavior here is to label the internal energy “U0” as
+“e_data”.  This behavior can be tweaked with the <code class="code docutils literal notranslate"><span class="pre">label_map</span></code>
+parameter.</p>
+<dl class="py function">
+<dt id="pinn.io.load_qm9">
+<code class="sig-prename descclassname">pinn.io.</code><code class="sig-name descname">load_qm9</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">flist</span></em>, <em class="sig-param"><span class="n">label_map</span><span class="o">=</span><span class="default_value">{'e_data': 'U0'}</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pinn.io.load_qm9" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the QM9 dataset</p>
+<p>QM9 provides a variety of labels, but typically we are only
+training on one target, e.g. U0. A <code class="docutils literal notranslate"><span class="pre">label_map</span></code> option is
+offered to choose the output dataset structure, by default, it
+only takes “U0” and maps that to “e_data”,
+i.e. label_map={‘e_data’: ‘U0’}.</p>
+<p>Other available labels are:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;tag&#39;</span><span class="p">,</span> <span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;homo&#39;</span><span class="p">,</span> <span class="s1">&#39;lumo&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;gap&#39;</span><span class="p">,</span> <span class="s1">&#39;r2&#39;</span><span class="p">,</span> <span class="s1">&#39;zpve&#39;</span><span class="p">,</span> <span class="s1">&#39;U0&#39;</span><span class="p">,</span> <span class="s1">&#39;U&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;Cv&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Desciptions of those tags can be found in QM9’s description file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flist</strong> (<em>list</em>) – list of QM9-formatted data files.</p></li>
+<li><p><strong>label_map</strong> (<em>dict</em>) – dictiionary</p></li>
+<li><p><strong>**kwargs</strong> – split options, see <code class="docutils literal notranslate"><span class="pre">pinn.io.base.split_list</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="ani-1-dataset">
+<h2>ANI-1 dataset<a class="headerlink" href="#ani-1-dataset" title="Permalink to this headline">¶</a></h2>
+<p>The ANI-1 dataset consists of 20M off-equilibrium DFT energies for
+organic molecules.  See ref. <a class="bibtex reference internal" href="../reference.html#smith-isayev-roitberg-2017" id="id2">[2]</a> for
+more details.</p>
+<dl class="py function">
+<dt id="pinn.io.load_ani">
+<code class="sig-prename descclassname">pinn.io.</code><code class="sig-name descname">load_ani</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filelist</span></em>, <em class="sig-param"><span class="n">cycle_length</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pinn.io.load_ani" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the ANI-1 dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filelist</strong> (<em>list</em>) – filenames of ANI-1 h5 files.</p></li>
+<li><p><strong>cycle_length</strong> (<em>int</em>) – number of parallel threads to read h5 file</p></li>
+<li><p><strong>**kwargs</strong> – split options, see <code class="docutils literal notranslate"><span class="pre">pinn.io.base.split_list</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="numpy-dataset">
+<h2>Numpy dataset<a class="headerlink" href="#numpy-dataset" title="Permalink to this headline">¶</a></h2>
+<p>Another easy way to generate your own dataset is to store the data as a
+dictionary of numpy arrays. See how it’s done in the <a class="reference internal" href="../notebooks/Learn_LJ_potential.html"><span class="doc">toy problem</span></a>.</p>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../datasets.html">Datasets</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="load_data.html">Loading data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manipulate_data.html">Manipulating datasets</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Implemented loaders</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../networks.html">Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ase.html">ASE interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks.html">Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc.html">Miscellaneous Notes</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../networks.html" title="Networks"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="manipulate_data.html" title="Manipulating datasets"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PiNN  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../datasets.html" >Datasets</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Implemented loaders</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Yunqi Shao.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
+    </div>
+  </body>
+</html>

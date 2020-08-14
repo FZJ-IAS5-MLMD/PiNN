@@ -1,0 +1,647 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick tour with QM9 &#8212; PiNN  documentation</title>
+    <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Optimizing the training" href="More_on_training.html" />
+    <link rel="prev" title="Notebooks" href="../notebooks.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="More_on_training.html" title="Optimizing the training"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../notebooks.html" title="Notebooks"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PiNN  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../notebooks.html" accesskey="U">Notebooks</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Quick tour with QM9</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<div class="section" id="Quick-tour-with-QM9">
+<h1>Quick tour with QM9<a class="headerlink" href="#Quick-tour-with-QM9" title="Permalink to this headline">¶</a></h1>
+<p>This notebook showcases a simple example of training a neural network potential on the QM9 dataset with PiNN.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">from</span> <span class="nn">ase.collections</span> <span class="kn">import</span> <span class="n">g2</span>
+<span class="kn">from</span> <span class="nn">pinn.io</span> <span class="kn">import</span> <span class="n">load_qm9</span><span class="p">,</span> <span class="n">sparse_batch</span>
+<span class="kn">from</span> <span class="nn">pinn.models</span> <span class="kn">import</span> <span class="n">potential_model</span>
+<span class="kn">from</span> <span class="nn">pinn.calculator</span> <span class="kn">import</span> <span class="n">PiNN_calc</span>
+<span class="c1"># CPU is used for documentation generation, feel free to use your GPU!</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;CUDA_VISIBLE_DEVICES&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="c1"># We heavily use indexed slices to do sparse summations,</span>
+<span class="c1"># which causes tensorflow to complain,</span>
+<span class="c1"># we believe it&#39;s safe to ignore this warning.</span>
+<span class="n">index_warning</span> <span class="o">=</span> <span class="s1">&#39;Converting sparse IndexedSlices&#39;</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">index_warning</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Getting-the-dataset">
+<h2>Getting the dataset<a class="headerlink" href="#Getting-the-dataset" title="Permalink to this headline">¶</a></h2>
+<p>PiNN adapts TensorFlow’s dataset API to handle different datasets.</p>
+<div class="line-block">
+<div class="line">For this and the following notebooks the QM9 dataset (<a class="reference external" href="https://doi.org/10.6084/m9.figshare.978904">https://doi.org/10.6084/m9.figshare.978904</a>) is used.</div>
+<div class="line">To follow the notebooks, download the dataset and change the directory accordingly.</div>
+</div>
+<div class="line-block">
+<div class="line">The dataset will be automatically split into subsets according to the split_ratio.</div>
+<div class="line">Note that to use the dataset with the estimator, the datasets should be a function, instead of a dataset object.</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">filelist</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="s1">&#39;/home/yunqi/datasets/QM9/dsgdb9nsd/*.xyz&#39;</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">load_qm9</span><span class="p">(</span><span class="n">filelist</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;train&#39;</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;test&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">})</span>
+<span class="n">train</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">dataset</span><span class="p">()[</span><span class="s1">&#39;train&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">repeat</span><span class="p">()</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">sparse_batch</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span>
+<span class="n">test</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">dataset</span><span class="p">()[</span><span class="s1">&#39;test&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">repeat</span><span class="p">()</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">sparse_batch</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Defining-the-model">
+<h2>Defining the model<a class="headerlink" href="#Defining-the-model" title="Permalink to this headline">¶</a></h2>
+<p>In PiNN, models are defined at two levels: models and networks.</p>
+<ul class="simple">
+<li><p>A model (model_fn) defines the target, loss and training details of the network.</p></li>
+<li><p>A network defines the structure of the neural network.</p></li>
+</ul>
+<p>In this example, we will use the potential model, and the PiNet network.</p>
+<p>The configuration of a model is stored in a nested dictionary like:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;model_dir&#39;</span><span class="p">:</span> <span class="s1">&#39;PiNet_QM9&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;network&#39;</span><span class="p">:</span> <span class="s1">&#39;pinet&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;network_params&#39;</span><span class="p">:</span> <span class="p">{</span>
+     <span class="s1">&#39;depth&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+     <span class="s1">&#39;rc&#39;</span><span class="p">:</span><span class="mf">4.0</span><span class="p">,</span>
+     <span class="s1">&#39;atom_types&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]},</span>
+ <span class="s1">&#39;model_params&#39;</span><span class="p">:{</span>
+     <span class="s1">&#39;learning_rate&#39;</span><span class="p">:</span> <span class="mf">3e-4</span><span class="p">,</span>
+     <span class="o">...</span><span class="p">}}</span>
+</pre></div>
+</div>
+<p>Available options of the network and model can be found in the documentation.</p>
+<div class="line-block">
+<div class="line">The easiest way to specify the network function is with its name.</div>
+<div class="line">You can also provide a custom function here.</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;model_dir&#39;</span><span class="p">:</span> <span class="s1">&#39;/tmp/PiNet_QM9&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;network&#39;</span><span class="p">:</span> <span class="s1">&#39;pinet&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;network_params&#39;</span><span class="p">:</span> <span class="p">{},</span>
+          <span class="s1">&#39;model_params&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;learning_rate&#39;</span><span class="p">:</span> <span class="mf">1e-3</span><span class="p">}}</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">potential_model</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+INFO:tensorflow:Using default config.
+INFO:tensorflow:Using config: {&#39;_model_dir&#39;: &#39;/tmp/PiNet_QM9&#39;, &#39;_tf_random_seed&#39;: None, &#39;_save_summary_steps&#39;: 100, &#39;_save_checkpoints_steps&#39;: None, &#39;_save_checkpoints_secs&#39;: 600, &#39;_session_config&#39;: allow_soft_placement: true
+graph_options {
+  rewrite_options {
+    meta_optimizer_iterations: ONE
+  }
+}
+, &#39;_keep_checkpoint_max&#39;: 5, &#39;_keep_checkpoint_every_n_hours&#39;: 10000, &#39;_log_step_count_steps&#39;: 100, &#39;_train_distribute&#39;: None, &#39;_device_fn&#39;: None, &#39;_protocol&#39;: None, &#39;_eval_distribute&#39;: None, &#39;_experimental_distribute&#39;: None, &#39;_service&#39;: None, &#39;_cluster_spec&#39;: &lt;tensorflow.python.training.server_lib.ClusterSpec object at 0x7f8114523710&gt;, &#39;_task_type&#39;: &#39;worker&#39;, &#39;_task_id&#39;: 0, &#39;_global_id_in_cluster&#39;: 0, &#39;_master&#39;: &#39;&#39;, &#39;_evaluation_master&#39;: &#39;&#39;, &#39;_is_chief&#39;: True, &#39;_num_ps_replicas&#39;: 0, &#39;_num_worker_replicas&#39;: 1}
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Configuring-the-training-process">
+<h2>Configuring the training process<a class="headerlink" href="#Configuring-the-training-process" title="Permalink to this headline">¶</a></h2>
+<p>The defined model is indeed a tf.Estimator object, thus, the training can be easily controlled</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">train_spec</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">estimator</span><span class="o">.</span><span class="n">TrainSpec</span><span class="p">(</span><span class="n">input_fn</span><span class="o">=</span><span class="n">train</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">eval_spec</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">estimator</span><span class="o">.</span><span class="n">EvalSpec</span><span class="p">(</span><span class="n">input_fn</span><span class="o">=</span><span class="n">test</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Train-and-evaluate">
+<h2>Train and evaluate<a class="headerlink" href="#Train-and-evaluate" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">tf</span><span class="o">.</span><span class="n">estimator</span><span class="o">.</span><span class="n">train_and_evaluate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">train_spec</span><span class="p">,</span> <span class="n">eval_spec</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+INFO:tensorflow:Not using Distribute Coordinator.
+INFO:tensorflow:Running training and evaluation locally (non-distributed).
+INFO:tensorflow:Start train and evaluate loop. The evaluate will happen after every checkpoint. Checkpoint frequency is determined based on RunConfig arguments: save_checkpoints_steps None or save_checkpoints_secs 600.
+WARNING:tensorflow:From /home/yunqi/miniconda3/lib/python3.6/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+WARNING:tensorflow:From /home/yunqi/miniconda3/lib/python3.6/site-packages/tensorflow/python/data/ops/dataset_ops.py:429: py_func (from tensorflow.python.ops.script_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+tf.py_func is deprecated in TF V2. Instead, use
+    tf.py_function, which takes a python function which manipulates tf eager
+    tensors instead of numpy arrays. It&#39;s easy to convert a tf eager tensor to
+    an ndarray (just call tensor.numpy()) but having access to eager tensors
+    means `tf.py_function`s can use accelerators such as GPUs as well as
+    being differentiable using a gradient tape.
+
+INFO:tensorflow:Calling model_fn.
+
+WARNING: The TensorFlow contrib module will not be included in TensorFlow 2.0.
+For more information, please see:
+  * https://github.com/tensorflow/community/blob/master/rfcs/20180907-contrib-sunset.md
+  * https://github.com/tensorflow/addons
+If you depend on functionality not listed there, please file an issue.
+
+WARNING:tensorflow:From /home/yunqi/work/pinn_proj/code/PiNN_dev/pinn/networks/pinet.py:76: dense (from tensorflow.python.layers.core) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use keras.layers.dense instead.
+Total number of trainable variables: 12064
+WARNING:tensorflow:From /home/yunqi/miniconda3/lib/python3.6/site-packages/tensorflow/python/ops/math_ops.py:3066: to_int32 (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+INFO:tensorflow:Done calling model_fn.
+INFO:tensorflow:Create CheckpointSaverHook.
+INFO:tensorflow:Graph was finalized.
+INFO:tensorflow:Running local_init_op.
+INFO:tensorflow:Done running local_init_op.
+INFO:tensorflow:Saving checkpoints for 0 into /tmp/PiNet_QM9/model.ckpt.
+INFO:tensorflow:loss = 182843.95, step = 1
+INFO:tensorflow:global_step/sec: 14.1376
+INFO:tensorflow:loss = 12441.237, step = 101 (7.075 sec)
+INFO:tensorflow:global_step/sec: 13.5323
+INFO:tensorflow:loss = 4586.3096, step = 201 (7.391 sec)
+INFO:tensorflow:global_step/sec: 13.306
+INFO:tensorflow:loss = 1428.9677, step = 301 (7.514 sec)
+INFO:tensorflow:global_step/sec: 13.8819
+INFO:tensorflow:loss = 1650.88, step = 401 (7.206 sec)
+INFO:tensorflow:global_step/sec: 12.0886
+INFO:tensorflow:loss = 932.35297, step = 501 (8.272 sec)
+INFO:tensorflow:global_step/sec: 11.0241
+INFO:tensorflow:loss = 546.3759, step = 601 (9.070 sec)
+INFO:tensorflow:global_step/sec: 10.7535
+INFO:tensorflow:loss = 1051.3408, step = 701 (9.300 sec)
+INFO:tensorflow:global_step/sec: 10.7193
+INFO:tensorflow:loss = 1045.8083, step = 801 (9.328 sec)
+INFO:tensorflow:global_step/sec: 10.9043
+INFO:tensorflow:loss = 542.9288, step = 901 (9.171 sec)
+INFO:tensorflow:Saving checkpoints for 1000 into /tmp/PiNet_QM9/model.ckpt.
+INFO:tensorflow:Calling model_fn.
+WARNING:tensorflow:From /home/yunqi/miniconda3/lib/python3.6/site-packages/tensorflow/python/ops/metrics_impl.py:363: to_float (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+INFO:tensorflow:Done calling model_fn.
+INFO:tensorflow:Starting evaluation at 2019-08-12T21:50:11Z
+INFO:tensorflow:Graph was finalized.
+WARNING:tensorflow:From /home/yunqi/miniconda3/lib/python3.6/site-packages/tensorflow/python/training/saver.py:1266: checkpoint_exists (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use standard file APIs to check for files with this prefix.
+INFO:tensorflow:Restoring parameters from /tmp/PiNet_QM9/model.ckpt-1000
+INFO:tensorflow:Running local_init_op.
+INFO:tensorflow:Done running local_init_op.
+INFO:tensorflow:Evaluation [10/100]
+INFO:tensorflow:Evaluation [20/100]
+INFO:tensorflow:Evaluation [30/100]
+INFO:tensorflow:Evaluation [40/100]
+INFO:tensorflow:Evaluation [50/100]
+INFO:tensorflow:Evaluation [60/100]
+INFO:tensorflow:Evaluation [70/100]
+INFO:tensorflow:Evaluation [80/100]
+INFO:tensorflow:Evaluation [90/100]
+INFO:tensorflow:Evaluation [100/100]
+INFO:tensorflow:Finished evaluation at 2019-08-12-21:50:19
+INFO:tensorflow:Saving dict for global step 1000: METRICS/E_LOSS = 605.77673, METRICS/E_MAE = 14.159206, METRICS/E_RMSE = 24.612532, METRICS/TOT_LOSS = 605.77673, global_step = 1000, loss = 605.77673
+INFO:tensorflow:Saving &#39;checkpoint_path&#39; summary for global step 1000: /tmp/PiNet_QM9/model.ckpt-1000
+INFO:tensorflow:Loss for final step: 240.72758.
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+({&#39;METRICS/E_LOSS&#39;: 605.77673,
+  &#39;METRICS/E_MAE&#39;: 14.159206,
+  &#39;METRICS/E_RMSE&#39;: 24.612532,
+  &#39;METRICS/TOT_LOSS&#39;: 605.77673,
+  &#39;loss&#39;: 605.77673,
+  &#39;global_step&#39;: 1000},
+ [])
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Using-the-model">
+<h2>Using the model<a class="headerlink" href="#Using-the-model" title="Permalink to this headline">¶</a></h2>
+<p>The trained model can be used as an ASE calculator.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">calc</span> <span class="o">=</span> <span class="n">PiNN_calc</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="n">atoms</span> <span class="o">=</span> <span class="n">g2</span><span class="p">[</span><span class="s1">&#39;C2H4&#39;</span><span class="p">]</span>
+<span class="n">atoms</span><span class="o">.</span><span class="n">set_calculator</span><span class="p">(</span><span class="n">calc</span><span class="p">)</span>
+<span class="n">atoms</span><span class="o">.</span><span class="n">get_forces</span><span class="p">(),</span> <span class="n">atoms</span><span class="o">.</span><span class="n">get_potential_energy</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+INFO:tensorflow:Calling model_fn.
+INFO:tensorflow:Done calling model_fn.
+INFO:tensorflow:Graph was finalized.
+INFO:tensorflow:Restoring parameters from /tmp/PiNet_QM9/model.ckpt-1000
+INFO:tensorflow:Running local_init_op.
+INFO:tensorflow:Done running local_init_op.
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(array([[-0.0000000e+00, -6.8545341e-07, -1.7648684e+01],
+        [-0.0000000e+00, -9.5367432e-07,  1.7648701e+01],
+        [-0.0000000e+00,  3.2562576e+01,  2.0237427e+01],
+        [-0.0000000e+00, -3.2562576e+01,  2.0237431e+01],
+        [-0.0000000e+00,  3.2562592e+01, -2.0237436e+01],
+        [-0.0000000e+00, -3.2562592e+01, -2.0237436e+01]], dtype=float32),
+ -88.99898529052734)
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Conclusion">
+<h2>Conclusion<a class="headerlink" href="#Conclusion" title="Permalink to this headline">¶</a></h2>
+<p>You have trained your first PiNN model, though the accuracy is not so satisfying (RMSE=21 Hartree!). Also, the training speed is slow as it’s limited by the IO and pre-processing of data.</p>
+<p>We will show in following notebooks that:</p>
+<ul class="simple">
+<li><p>Proper scaling of the energy will improve the accuracy of the model.</p></li>
+<li><p>The training speed can be enhanced by caching and pre-processing the data.</p></li>
+</ul>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../networks.html">Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ase.html">ASE interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">Utilities</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../notebooks.html">Notebooks</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Quick tour with QM9</a></li>
+<li class="toctree-l2"><a class="reference internal" href="More_on_training.html">Optimizing the training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Customizing_dataset.html">Customizing dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Writing_a_network.html">Writing an atomic neural network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Learn_LJ_potential.html">Learning a LJ potential</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tune_visualize.html">Visualizing Ray Tune result</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc.html">Miscellaneous Notes</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="More_on_training.html" title="Optimizing the training"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../notebooks.html" title="Notebooks"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PiNN  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../notebooks.html" >Notebooks</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Quick tour with QM9</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Yunqi Shao.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
+    </div>
+  </body>
+</html>

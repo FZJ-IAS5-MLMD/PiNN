@@ -1,0 +1,156 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PiNet &#8212; PiNN  documentation</title>
+    <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="BPNN" href="bpnn.html" />
+    <link rel="prev" title="Networks" href="../networks.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="bpnn.html" title="BPNN"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../networks.html" title="Networks"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PiNN  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../networks.html" accesskey="U">Networks</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">PiNet</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pinet">
+<h1>PiNet<a class="headerlink" href="#pinet" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="pinn.networks.pinet">
+<code class="sig-prename descclassname">pinn.networks.</code><code class="sig-name descname">pinet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensors</span></em>, <em class="sig-param"><span class="n">pp_nodes</span><span class="o">=</span><span class="default_value">[16, 16]</span></em>, <em class="sig-param"><span class="n">pi_nodes</span><span class="o">=</span><span class="default_value">[16, 16]</span></em>, <em class="sig-param"><span class="n">ii_nodes</span><span class="o">=</span><span class="default_value">[16, 16]</span></em>, <em class="sig-param"><span class="n">en_nodes</span><span class="o">=</span><span class="default_value">[16, 16]</span></em>, <em class="sig-param"><span class="n">depth</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">atom_types</span><span class="o">=</span><span class="default_value">[1, 6, 7, 8]</span></em>, <em class="sig-param"><span class="n">act</span><span class="o">=</span><span class="default_value">'tanh'</span></em>, <em class="sig-param"><span class="n">rc</span><span class="o">=</span><span class="default_value">4.0</span></em>, <em class="sig-param"><span class="n">cutoff_type</span><span class="o">=</span><span class="default_value">'f1'</span></em>, <em class="sig-param"><span class="n">basis_type</span><span class="o">=</span><span class="default_value">'polynomial'</span></em>, <em class="sig-param"><span class="n">n_basis</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">gamma</span><span class="o">=</span><span class="default_value">3.0</span></em>, <em class="sig-param"><span class="n">preprocess</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pinn.networks.pinet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Network function for the PiNet neural network</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tensors</strong> – input data (nested tensor from dataset).</p></li>
+<li><p><strong>atom_types</strong> (<em>list</em>) – elements for the one-hot embedding.</p></li>
+<li><p><strong>pp_nodes</strong> (<em>list</em>) – number of nodes for pp layer.</p></li>
+<li><p><strong>pi_nodes</strong> (<em>list</em>) – number of nodes for pi layer.</p></li>
+<li><p><strong>ii_nodes</strong> (<em>list</em>) – number of nodes for ii layer.</p></li>
+<li><p><strong>en_nodes</strong> (<em>list</em>) – number of nodes for en layer.</p></li>
+<li><p><strong>depth</strong> (<em>int</em>) – number of interaction blocks.</p></li>
+<li><p><strong>rc</strong> (<em>float</em>) – cutoff radius.</p></li>
+<li><p><strong>basis_type</strong> (<em>string</em>) – type of basis function to use,
+can be “polynomial” or “gaussian”.</p></li>
+<li><p><strong>gamma</strong> (<em>float</em>) – controls width of gaussian function for gaussian basis.</p></li>
+<li><p><strong>n_basis</strong> (<em>int</em>) – number of basis functions to use.</p></li>
+<li><p><strong>cutoff_type</strong> (<em>string</em>) – cutoff function to use with the basis.</p></li>
+<li><p><strong>act</strong> (<em>string</em>) – activation function to use.</p></li>
+<li><p><strong>preprocess</strong> (<em>bool</em>) – whether to return the preprocessed tensor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>prediction or preprocessed tensor dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets.html">Datasets</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../networks.html">Networks</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../networks.html#structures-of-ann">Structures of ANN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../networks.html#pinn-s-representation-of-anns">PiNN’s representation of ANNs</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../networks.html#implemented-networks">Implemented networks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ase.html">ASE interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks.html">Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc.html">Miscellaneous Notes</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="bpnn.html" title="BPNN"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../networks.html" title="Networks"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PiNN  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../networks.html" >Networks</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">PiNet</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Yunqi Shao.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
+    </div>
+  </body>
+</html>

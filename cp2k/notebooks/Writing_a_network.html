@@ -1,0 +1,693 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Writing an atomic neural network &#8212; PiNN  documentation</title>
+    <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Learning a LJ potential" href="Learn_LJ_potential.html" />
+    <link rel="prev" title="Customizing dataset" href="Customizing_dataset.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Learn_LJ_potential.html" title="Learning a LJ potential"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Customizing_dataset.html" title="Customizing dataset"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PiNN  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../notebooks.html" accesskey="U">Notebooks</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../networks.html">Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ase.html">ASE interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">Utilities</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../notebooks.html">Notebooks</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Quick_tour.html">Quick tour with QM9</a></li>
+<li class="toctree-l2"><a class="reference internal" href="More_on_training.html">Optimizing the training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Customizing_dataset.html">Customizing dataset</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Writing an atomic neural network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Learn_LJ_potential.html">Learning a LJ potential</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Tune_visualize.html">Visualizing Ray Tune result</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc.html">Miscellaneous Notes</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5.5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<div class="section" id="Writing-an-atomic-neural-network">
+<h1>Writing an atomic neural network<a class="headerlink" href="#Writing-an-atomic-neural-network" title="Permalink to this headline">¶</a></h1>
+<p>This notebook demonstrates the construction of a “network” in PiNN.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">from</span> <span class="nn">pinn.io</span> <span class="kn">import</span> <span class="n">load_qm9</span><span class="p">,</span> <span class="n">sparse_batch</span>
+<span class="kn">from</span> <span class="nn">pinn.layers</span> <span class="kn">import</span> <span class="n">cell_list_nl</span>
+<span class="kn">from</span> <span class="nn">pinn.models</span> <span class="kn">import</span> <span class="n">potential_model</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">filelist</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="s1">&#39;/home/yunqi/datasets/QM9/dsgdb9nsd/*.xyz&#39;</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">load_qm9</span><span class="p">(</span><span class="n">filelist</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;train&#39;</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;test&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">})</span>
+<span class="n">train</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">dataset</span><span class="p">()[</span><span class="s1">&#39;train&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">repeat</span><span class="p">()</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">sparse_batch</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span>
+<span class="n">test</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">dataset</span><span class="p">()[</span><span class="s1">&#39;test&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">repeat</span><span class="p">()</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">sparse_batch</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Network-function">
+<h2>Network function<a class="headerlink" href="#Network-function" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line">A network function represents a learnable function that maps structures to atomic predictions.</div>
+<div class="line">We’ll build a network function from scratch to familiarize you with the structure of a network.</div>
+</div>
+<div class="line-block">
+<div class="line">The following will be a neural network that takes the elements and distances of atom pairs as input,</div>
+<div class="line">and predicts pairwise energies.</div>
+</div>
+<p>PS. If you are not sure about what an operation does, <code class="docutils literal notranslate"><span class="pre">sess.run(the_tensor)</span></code> to find out.</p>
+<p>Starting with the input tensors:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">tensors</span> <span class="o">=</span> <span class="n">train</span><span class="p">()</span><span class="o">.</span><span class="n">make_one_shot_iterator</span><span class="p">()</span><span class="o">.</span><span class="n">get_next</span><span class="p">();</span> <span class="n">tensors</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+WARNING:tensorflow:From /home/yunqi/.miniconda/envs/pinn_env/lib/python3.7/site-packages/tensorflow/python/data/ops/dataset_ops.py:429: py_func (from tensorflow.python.ops.script_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+tf.py_func is deprecated in TF V2. Instead, use
+    tf.py_function, which takes a python function which manipulates tf eager
+    tensors instead of numpy arrays. It&#39;s easy to convert a tf eager tensor to
+    an ndarray (just call tensor.numpy()) but having access to eager tensors
+    means `tf.py_function`s can use accelerators such as GPUs as well as
+    being differentiable using a gradient tape.
+
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;elems&#39;: &lt;tf.Tensor &#39;IteratorGetNext:2&#39; shape=(?,) dtype=int32&gt;,
+ &#39;coord&#39;: &lt;tf.Tensor &#39;IteratorGetNext:0&#39; shape=(?, 3) dtype=float32&gt;,
+ &#39;e_data&#39;: &lt;tf.Tensor &#39;IteratorGetNext:1&#39; shape=(?,) dtype=float32&gt;,
+ &#39;ind_1&#39;: &lt;tf.Tensor &#39;IteratorGetNext:3&#39; shape=(?, 1) dtype=int32&gt;}
+</pre></div></div>
+</div>
+<p>We then build the neighbor list.</p>
+<p><code class="docutils literal notranslate"><span class="pre">cell_list_nl</span></code> is an important component of PiNN, it implements the cell lists algorithm which yields the neighor list of structures with linear scaling. It returns three tensors: <code class="docutils literal notranslate"><span class="pre">ind_2</span></code> is the indices of the i,j atoms, <code class="docutils literal notranslate"><span class="pre">dist</span></code> is the pairwise distance and <code class="docutils literal notranslate"><span class="pre">diff</span></code> is the displacement vector. The first dimension of the tensors is the number of pairs.</p>
+<p>Batches and periodic boundary condictions are handled.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">nl</span> <span class="o">=</span> <span class="n">cell_list_nl</span><span class="p">(</span><span class="n">tensors</span><span class="p">);</span> <span class="n">nl</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+WARNING: The TensorFlow contrib module will not be included in TensorFlow 2.0.
+For more information, please see:
+  * https://github.com/tensorflow/community/blob/master/rfcs/20180907-contrib-sunset.md
+  * https://github.com/tensorflow/addons
+If you depend on functionality not listed there, please file an issue.
+
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;ind_2&#39;: &lt;tf.Tensor &#39;cell_list_nl/concat_3:0&#39; shape=(?, 2) dtype=int32&gt;,
+ &#39;dist&#39;: &lt;tf.Tensor &#39;cell_list_nl/GatherNd_5:0&#39; shape=(?,) dtype=float32&gt;,
+ &#39;diff&#39;: &lt;tf.Tensor &#39;cell_list_nl/GatherNd_6:0&#39; shape=(?, 3) dtype=float32&gt;}
+</pre></div></div>
+</div>
+<p>We can gather the elements of i,j for each pair using <code class="docutils literal notranslate"><span class="pre">tf.gather</span></code>. Here we cast them into floating points so that they can be used as inputs of the neural network.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">elems</span> <span class="o">=</span> <span class="n">tensors</span><span class="p">[</span><span class="s1">&#39;elems&#39;</span><span class="p">]</span>
+<span class="n">natoms</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">elems</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">ind_2</span> <span class="o">=</span> <span class="n">nl</span><span class="p">[</span><span class="s1">&#39;ind_2&#39;</span><span class="p">]</span>
+<span class="n">dist</span> <span class="o">=</span> <span class="n">nl</span><span class="p">[</span><span class="s1">&#39;dist&#39;</span><span class="p">]</span>
+
+<span class="n">elem_i</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">elems</span><span class="p">,</span> <span class="n">ind_2</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">elem_j</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">elems</span><span class="p">,</span> <span class="n">ind_2</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">elem_i</span><span class="p">,</span> <span class="n">elem_j</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(&lt;tf.Tensor &#39;Cast:0&#39; shape=(?,) dtype=float32&gt;,
+ &lt;tf.Tensor &#39;Cast_1:0&#39; shape=(?,) dtype=float32&gt;)
+</pre></div></div>
+</div>
+<p>We take the elements of a pair and their distance as input, and output pairwise energy.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pair</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">elem_i</span><span class="p">,</span> <span class="n">elem_j</span><span class="p">,</span> <span class="n">dist</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">nodes</span> <span class="o">=</span> <span class="n">pair</span>
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">]:</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">dense</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">)</span>
+
+<span class="c1"># use a linear output layer to produce the energy</span>
+<span class="n">e_pair</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">dense</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="kc">None</span><span class="p">);</span> <span class="n">e_pair</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+WARNING:tensorflow:From &lt;ipython-input-6-0e8a3406120e&gt;:5: dense (from tensorflow.python.layers.core) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use keras.layers.dense instead.
+WARNING:tensorflow:From /home/yunqi/.miniconda/envs/pinn_env/lib/python3.7/site-packages/tensorflow/python/framework/op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;tf.Tensor &#39;dense_2/BiasAdd:0&#39; shape=(?, 1) dtype=float32&gt;
+</pre></div></div>
+</div>
+<p>The pairwise energies can be summed to atomic energies with <code class="docutils literal notranslate"><span class="pre">tf.unsorted_segment_sum</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">e_atom</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">unsorted_segment_sum</span><span class="p">(</span><span class="n">e_pair</span><span class="p">,</span> <span class="n">ind_2</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">natoms</span><span class="p">);</span> <span class="n">e_atom</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;tf.Tensor &#39;UnsortedSegmentSum:0&#39; shape=(?, 1) dtype=float32&gt;
+</pre></div></div>
+</div>
+<p>Put them together, now you have a new network function.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">my_network</span><span class="p">(</span><span class="n">tensors</span><span class="p">,</span> <span class="n">n_nodes</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="n">elems</span> <span class="o">=</span> <span class="n">tensors</span><span class="p">[</span><span class="s1">&#39;elems&#39;</span><span class="p">]</span>
+    <span class="n">natoms</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">elems</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">nl</span> <span class="o">=</span> <span class="n">cell_list_nl</span><span class="p">(</span><span class="n">tensors</span><span class="p">)</span>
+    <span class="n">ind_2</span> <span class="o">=</span> <span class="n">nl</span><span class="p">[</span><span class="s1">&#39;ind_2&#39;</span><span class="p">]</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="n">nl</span><span class="p">[</span><span class="s1">&#39;dist&#39;</span><span class="p">]</span>
+
+    <span class="n">elem_i</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">elems</span><span class="p">,</span> <span class="n">ind_2</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">elem_j</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">elems</span><span class="p">,</span> <span class="n">ind_2</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">pair</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">elem_i</span><span class="p">,</span> <span class="n">elem_j</span><span class="p">,</span> <span class="n">dist</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">pair</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">n_nodes</span><span class="p">:</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">dense</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;tanh&#39;</span><span class="p">)</span>
+
+    <span class="n">e_pair</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">dense</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">e_atom</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">unsorted_segment_sum</span><span class="p">(</span><span class="n">e_pair</span><span class="p">,</span> <span class="n">ind_2</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">natoms</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">e_atom</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Training-with-the-network">
+<h2>Training with the network<a class="headerlink" href="#Training-with-the-network" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line">Once you’ve got your <code class="docutils literal notranslate"><span class="pre">network_fn</span></code>, you can directly use it in the existing models.</div>
+<div class="line">Just substitute <code class="docutils literal notranslate"><span class="pre">network</span></code> with your function definition.</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">params</span><span class="o">=</span><span class="p">{</span>
+    <span class="s1">&#39;model_dir&#39;</span><span class="p">:</span> <span class="s1">&#39;/tmp/my_network&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;network&#39;</span><span class="p">:</span> <span class="n">my_network</span><span class="p">,</span>
+    <span class="s1">&#39;network_params&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;n_nodes&#39;</span><span class="p">:[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">]},</span>
+    <span class="s1">&#39;model_params&#39;</span><span class="p">:{}}</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">model</span> <span class="o">=</span> <span class="n">potential_model</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+<span class="n">train_spec</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">estimator</span><span class="o">.</span><span class="n">TrainSpec</span><span class="p">(</span><span class="n">input_fn</span><span class="o">=</span><span class="n">train</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">eval_spec</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">estimator</span><span class="o">.</span><span class="n">EvalSpec</span><span class="p">(</span><span class="n">input_fn</span><span class="o">=</span><span class="n">test</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">tf</span><span class="o">.</span><span class="n">estimator</span><span class="o">.</span><span class="n">train_and_evaluate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">train_spec</span><span class="p">,</span> <span class="n">eval_spec</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+INFO:tensorflow:Using default config.
+INFO:tensorflow:Using config: {&#39;_model_dir&#39;: &#39;/tmp/my_network&#39;, &#39;_tf_random_seed&#39;: None, &#39;_save_summary_steps&#39;: 100, &#39;_save_checkpoints_steps&#39;: None, &#39;_save_checkpoints_secs&#39;: 600, &#39;_session_config&#39;: allow_soft_placement: true
+graph_options {
+  rewrite_options {
+    meta_optimizer_iterations: ONE
+  }
+}
+, &#39;_keep_checkpoint_max&#39;: 5, &#39;_keep_checkpoint_every_n_hours&#39;: 10000, &#39;_log_step_count_steps&#39;: 100, &#39;_train_distribute&#39;: None, &#39;_device_fn&#39;: None, &#39;_protocol&#39;: None, &#39;_eval_distribute&#39;: None, &#39;_experimental_distribute&#39;: None, &#39;_service&#39;: None, &#39;_cluster_spec&#39;: &lt;tensorflow.python.training.server_lib.ClusterSpec object at 0x7fcddb384150&gt;, &#39;_task_type&#39;: &#39;worker&#39;, &#39;_task_id&#39;: 0, &#39;_global_id_in_cluster&#39;: 0, &#39;_master&#39;: &#39;&#39;, &#39;_evaluation_master&#39;: &#39;&#39;, &#39;_is_chief&#39;: True, &#39;_num_ps_replicas&#39;: 0, &#39;_num_worker_replicas&#39;: 1}
+INFO:tensorflow:Not using Distribute Coordinator.
+INFO:tensorflow:Running training and evaluation locally (non-distributed).
+INFO:tensorflow:Start train and evaluate loop. The evaluate will happen after every checkpoint. Checkpoint frequency is determined based on RunConfig arguments: save_checkpoints_steps None or save_checkpoints_secs 600.
+INFO:tensorflow:Calling model_fn.
+Total number of trainable variables: 353
+INFO:tensorflow:Done calling model_fn.
+INFO:tensorflow:Create CheckpointSaverHook.
+INFO:tensorflow:Graph was finalized.
+INFO:tensorflow:Running local_init_op.
+INFO:tensorflow:Done running local_init_op.
+INFO:tensorflow:Saving checkpoints for 0 into /tmp/my_network/model.ckpt.
+INFO:tensorflow:loss = 346152.0, step = 1
+INFO:tensorflow:global_step/sec: 9.72204
+INFO:tensorflow:loss = 40745.125, step = 101 (10.289 sec)
+INFO:tensorflow:global_step/sec: 9.65198
+INFO:tensorflow:loss = 19949.152, step = 201 (10.360 sec)
+INFO:tensorflow:global_step/sec: 9.44661
+INFO:tensorflow:loss = 14702.94, step = 301 (10.588 sec)
+INFO:tensorflow:global_step/sec: 9.58072
+INFO:tensorflow:loss = 9526.419, step = 401 (10.438 sec)
+INFO:tensorflow:global_step/sec: 9.54791
+INFO:tensorflow:loss = 3616.6038, step = 501 (10.474 sec)
+INFO:tensorflow:global_step/sec: 9.2748
+INFO:tensorflow:loss = 1968.7462, step = 601 (10.779 sec)
+INFO:tensorflow:global_step/sec: 9.42503
+INFO:tensorflow:loss = 2020.4435, step = 701 (10.612 sec)
+INFO:tensorflow:global_step/sec: 9.53732
+INFO:tensorflow:loss = 2231.4812, step = 801 (10.483 sec)
+INFO:tensorflow:global_step/sec: 9.45915
+INFO:tensorflow:loss = 1619.0415, step = 901 (10.573 sec)
+INFO:tensorflow:Saving checkpoints for 1000 into /tmp/my_network/model.ckpt.
+INFO:tensorflow:Calling model_fn.
+WARNING:tensorflow:From /home/yunqi/.miniconda/envs/pinn_env/lib/python3.7/site-packages/tensorflow/python/ops/metrics_impl.py:363: to_float (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+INFO:tensorflow:Done calling model_fn.
+INFO:tensorflow:Starting evaluation at 2019-09-30T22:43:41Z
+INFO:tensorflow:Graph was finalized.
+WARNING:tensorflow:From /home/yunqi/.miniconda/envs/pinn_env/lib/python3.7/site-packages/tensorflow/python/training/saver.py:1266: checkpoint_exists (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use standard file APIs to check for files with this prefix.
+INFO:tensorflow:Restoring parameters from /tmp/my_network/model.ckpt-1000
+INFO:tensorflow:Running local_init_op.
+INFO:tensorflow:Done running local_init_op.
+INFO:tensorflow:Evaluation [10/100]
+INFO:tensorflow:Evaluation [20/100]
+INFO:tensorflow:Evaluation [30/100]
+INFO:tensorflow:Evaluation [40/100]
+INFO:tensorflow:Evaluation [50/100]
+INFO:tensorflow:Evaluation [60/100]
+INFO:tensorflow:Evaluation [70/100]
+INFO:tensorflow:Evaluation [80/100]
+INFO:tensorflow:Evaluation [90/100]
+INFO:tensorflow:Evaluation [100/100]
+INFO:tensorflow:Finished evaluation at 2019-09-30-22:43:53
+INFO:tensorflow:Saving dict for global step 1000: METRICS/E_LOSS = 1788.0197, METRICS/E_MAE = 32.56714, METRICS/E_RMSE = 42.28498, METRICS/TOT_LOSS = 1788.0195, global_step = 1000, loss = 1788.0195
+INFO:tensorflow:Saving &#39;checkpoint_path&#39; summary for global step 1000: /tmp/my_network/model.ckpt-1000
+INFO:tensorflow:Loss for final step: 1588.4066.
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+({&#39;METRICS/E_LOSS&#39;: 1788.0197,
+  &#39;METRICS/E_MAE&#39;: 32.56714,
+  &#39;METRICS/E_RMSE&#39;: 42.28498,
+  &#39;METRICS/TOT_LOSS&#39;: 1788.0195,
+  &#39;loss&#39;: 1788.0195,
+  &#39;global_step&#39;: 1000},
+ [])
+</pre></div></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Learn_LJ_potential.html" title="Learning a LJ potential"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Customizing_dataset.html" title="Customizing dataset"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PiNN  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../notebooks.html" >Notebooks</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Yunqi Shao.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
+    </div>
+  </body>
+</html>

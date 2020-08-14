@@ -1,0 +1,160 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PiNN: a Python library for building atomic neural networks &#8212; PiNN  documentation</title>
+    <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Introduction" href="introduction.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="introduction.html" title="Introduction"
+             accesskey="N">next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">PiNN  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">PiNN: a Python library for building atomic neural networks</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pinn-a-python-library-for-building-atomic-neural-networks">
+<h1>PiNN: a Python library for building atomic neural networks<a class="headerlink" href="#pinn-a-python-library-for-building-atomic-neural-networks" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#flexibility">Flexibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#scalability">Scalability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="datasets/load_data.html">Loading data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets/manipulate_data.html">Manipulating datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets/implemented.html">Implemented loaders</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="networks.html">Networks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="networks.html#structures-of-ann">Structures of ANN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="networks.html#pinn-s-representation-of-anns">PiNN’s representation of ANNs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="networks.html#implemented-networks">Implemented networks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="models.html#write-a-model">Write a model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#implemented-models">Implemented models</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ase.html">ASE interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="utils/pinnboard.html">PiNNboard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils/pinn_train.html">Cloud/CLI trainer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils/ray_tune.html">Use PiNN with Ray Tune</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks.html">Notebooks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/Quick_tour.html">Quick tour with QM9</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/More_on_training.html">Optimizing the training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/Customizing_dataset.html">Customizing dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/Writing_a_network.html">Writing an atomic neural network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/Learn_LJ_potential.html">Learning a LJ potential</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/Tune_visualize.html">Visualizing Ray Tune result</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="misc.html">Miscellaneous Notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="misc.html#known-issue-with-ase-barostats">Known issue with ASE barostats</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="#">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="networks.html">Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ase.html">ASE interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks.html">Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="misc.html">Miscellaneous Notes</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="introduction.html" title="Introduction"
+             >next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">PiNN  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">PiNN: a Python library for building atomic neural networks</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Yunqi Shao.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
+    </div>
+  </body>
+</html>

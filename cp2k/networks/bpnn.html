@@ -1,0 +1,173 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>BPNN &#8212; PiNN  documentation</title>
+    <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Models" href="../models.html" />
+    <link rel="prev" title="PiNet" href="pinet.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../models.html" title="Models"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="pinet.html" title="PiNet"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PiNN  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../networks.html" accesskey="U">Networks</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets.html">Datasets</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../networks.html">Networks</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../networks.html#structures-of-ann">Structures of ANN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../networks.html#pinn-s-representation-of-anns">PiNN’s representation of ANNs</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../networks.html#implemented-networks">Implemented networks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ase.html">ASE interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks.html">Notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc.html">Miscellaneous Notes</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="bpnn">
+<h1>BPNN<a class="headerlink" href="#bpnn" title="Permalink to this headline">¶</a></h1>
+<p>Behler-Parrinello Neural Network, see
+ref. <a class="bibtex reference internal" href="../reference.html#behler-constructinghighdimensionalneural-2015" id="id1">[4]</a> for details.</p>
+<dl class="function">
+<dt id="pinn.networks.bpnn">
+<code class="sig-prename descclassname">pinn.networks.</code><code class="sig-name descname">bpnn</code><span class="sig-paren">(</span><em class="sig-param">tensors</em>, <em class="sig-param">sf_spec</em>, <em class="sig-param">nn_spec</em>, <em class="sig-param">rc=5.0</em>, <em class="sig-param">act='tanh'</em>, <em class="sig-param">cutoff_type='f1'</em>, <em class="sig-param">fp_range=[]</em>, <em class="sig-param">fp_scale=False</em>, <em class="sig-param">preprocess=False</em>, <em class="sig-param">use_jacobian=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pinn.networks.bpnn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Network function for Behler-Parrinello Neural Network</p>
+<p>Example of sf_spec:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;G2&#39;</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;j&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;Rs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span><span class="mf">2.</span><span class="p">],</span> <span class="s1">&#39;eta&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.2</span><span class="p">]},</span>
+ <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;G2&#39;</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;j&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Rs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span><span class="mf">2.</span><span class="p">],</span> <span class="s1">&#39;eta&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.2</span><span class="p">]},</span>
+ <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;G4&#39;</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;j&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;lambd&#39;</span><span class="p">:[</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;zeta&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span><span class="mf">2.</span><span class="p">],</span> <span class="s1">&#39;eta&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.2</span><span class="p">]}]</span>
+</pre></div>
+</div>
+<p>The symmetry functions are defined according to the paper:</p>
+<blockquote>
+<div><p>Behler, Jörg. “Constructing High-Dimensional Neural Network Potentials: A Tutorial Review.”
+International Journal of Quantum Chemistry 115, no. 16 (August 15, 2015): 103250.
+<a class="reference external" href="https://doi.org/10.1002/qua.24890">https://doi.org/10.1002/qua.24890</a>.
+(Note the naming of symmetry functions is different from <a class="reference external" href="http://dx.doi.org/10.1063/1.3553717">http://dx.doi.org/10.1063/1.3553717</a>)</p>
+</div></blockquote>
+<p>For more detials about symmetry functions, see the definitions of symmetry functions.</p>
+<p>Example of nn_spec:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="mi">8</span><span class="p">:</span> <span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">],</span> <span class="mi">1</span><span class="p">:</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">]}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tensors</strong> – input data (nested tensor from dataset).</p></li>
+<li><p><strong>sf_spec</strong> (<em>dict</em>) – symmetry function specification.</p></li>
+<li><p><strong>nn_spec</strong> (<em>dict</em>) – elementwise network specification,
+each key points to a list specifying the
+number of nodes in the feed-forward subnets.</p></li>
+<li><p><strong>rc</strong> (<em>float</em>) – cutoff radius.</p></li>
+<li><p><strong>cutoff_type</strong> (<em>string</em>) – cutoff function to use.</p></li>
+<li><p><strong>act</strong> (<em>str</em>) – activation function to use in dense layers.</p></li>
+<li><p><strong>fp_scale</strong> (<em>bool</em>) – scale the fingerprints according to fp_range.</p></li>
+<li><p><strong>fp_range</strong> (<em>list of</em><em> [</em><em>min</em><em>, </em><em>max</em><em>]</em>) – the atomic fingerprint range for each SF
+used to pre-condition the fingerprints.</p></li>
+<li><p><strong>preprocess</strong> (<em>bool</em>) – whether to return the preprocessed tensor.</p></li>
+<li><p><strong>use_jacobian</strong> (<em>bool</em>) – whether to reconnect the grads of fingerprints.
+note that one must use the jacobian if one want forces with
+preprocessing, the option is here mainly for verifying the
+jacobian implementation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>prediction or preprocessed tensor dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../models.html" title="Models"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="pinet.html" title="PiNet"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PiNN  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../networks.html" >Networks</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Yunqi Shao.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
+    </div>
+  </body>
+</html>
