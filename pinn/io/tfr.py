@@ -4,7 +4,7 @@
 import sys
 import yaml
 import tensorflow.compat.v1 as tf
-from tensorflow.compat.v1.python.lib.io.file_io import FileIO
+from tensorflow.python.lib.io.file_io import FileIO
 
 
 def write_tfrecord(fname, dataset, log_every=100, pre_fn=None):

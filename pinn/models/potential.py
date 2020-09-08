@@ -65,7 +65,7 @@ def potential_model(params, **kwargs):
     """
     import os
     import yaml
-    from tensorflow.compat.v1.python.lib.io.file_io import FileIO
+    from tensorflow.python.lib.io.file_io import FileIO
     from datetime import datetime
 
     if isinstance(params, str):
