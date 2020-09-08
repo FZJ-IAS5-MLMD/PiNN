@@ -2,7 +2,7 @@
 """Numpy dataset"""
 
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 from pinn.io.base import map_nested, split_list
 
 

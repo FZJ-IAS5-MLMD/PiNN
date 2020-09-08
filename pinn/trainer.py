@@ -45,8 +45,8 @@ def trainner(model_dir, params_file,
              batch_size, preprocess, scratch_dir, cache_data,
              shuffle_buffer, regen_dress):
     import yaml, tempfile, os
-    import tensorflow as tf
-    from tensorflow.python.lib.io.file_io import FileIO
+    import tensorflow.compat.v1 as tf
+    from tensorflow.compat.v1.python.lib.io.file_io import FileIO
     from pinn import networks
     from pinn.models import potential_model
     from pinn.utils import get_atomic_dress

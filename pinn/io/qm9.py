@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 from ase.data import atomic_numbers
 from pinn.io.base import list_loader
 

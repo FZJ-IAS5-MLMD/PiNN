@@ -2,7 +2,7 @@
 """Basic functions for dataset loaders"""
 
 import random
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 
 class _datalist(list):
@@ -38,7 +38,7 @@ def sparse_batch(batch_size, drop_remainder=False, num_parallel_calls=8,
                 tensors[name] = tf.gather_nd(tensors[name], atom_ind)
         return tensors
     return lambda dataset: \
-        dataset.padded_batch(batch_size, dataset.output_shapes,
+        dataset.padded_batch(batch_size, tf.data.get_output_shapes(dataset),
                              drop_remainder=drop_remainder).map(
                                  sparsify, num_parallel_calls)
 

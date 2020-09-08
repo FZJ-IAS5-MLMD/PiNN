@@ -22,7 +22,7 @@ Modified by: Yunqi Shao [yunqi.shao@kemi.uu.se]
 """
 
 import re
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 import numpy as np
 from pinn.io import list_loader
 from ase.data import atomic_numbers

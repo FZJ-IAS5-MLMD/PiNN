@@ -4,7 +4,7 @@
 Layers here should be pure functions (do not change the inputs).
 """
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 from pinn.utils import pi_named
 
 
@@ -91,7 +91,7 @@ def cell_list_nl(tensors, rc=5.0):
     # Get the atom's relative index(rind) and position(rpos) in cell
     # And each cell's atom list (alst)
     atom_cind = tf.gather_nd(samp_cind, atom_cpos) - 1
-    atom_cind_args = tf.contrib.framework.argsort(atom_cind, axis=0)
+    atom_cind_args = tf.argsort(atom_cind, axis=0)
     atom_cind_sort = tf.gather(atom_cind, atom_cind_args)
 
     atom_rind_sort = tf.cumsum(tf.ones_like(atom_cind, tf.int32))

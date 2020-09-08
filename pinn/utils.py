@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ Misc tools"""
 
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 import numpy as np
 from functools import wraps
 
@@ -72,7 +72,7 @@ def TuneTrainable(train_fn):
     """
     import os
     from ray.tune import Trainable
-    from tensorflow.train import CheckpointSaverListener
+    from tensorflow.compat.v1.train import CheckpointSaverListener
 
     class _tuneStoper(CheckpointSaverListener):
         def after_save(self, session, global_step_value):

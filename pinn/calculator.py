@@ -2,7 +2,7 @@
 """ASE calcualtor for to use with PiNN"""
 
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 from ase.calculators.calculator import Calculator
 
 

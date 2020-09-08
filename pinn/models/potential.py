@@ -5,7 +5,7 @@ Models transfer a network to a model function to use with the tf estimator api.
 A model defines the goal/loss of the model, as well as training paramters.
 """
 import pinn.networks
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 import numpy as np
 
 from pinn.layers import atomic_dress
@@ -65,7 +65,7 @@ def potential_model(params, **kwargs):
     """
     import os
     import yaml
-    from tensorflow.python.lib.io.file_io import FileIO
+    from tensorflow.compat.v1.python.lib.io.file_io import FileIO
     from datetime import datetime
 
     if isinstance(params, str):

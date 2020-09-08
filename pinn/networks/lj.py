@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 from pinn.layers import cell_list_nl
 from pinn.utils import connect_dist_grad
 

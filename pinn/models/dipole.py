@@ -5,7 +5,7 @@ A model defines the goal/loss of the model, as well as training paramters.
 """
 from pinn.networks import pinet
 import pinn.networks
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 import numpy as np
 
 from pinn.utils import pi_named
