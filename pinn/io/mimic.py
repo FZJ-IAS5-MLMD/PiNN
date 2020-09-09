@@ -16,7 +16,6 @@ atomic_numbers = {'X': 0, 'H': 1, 'He': 2, 'Li': 3, 'Be': 4, 'B': 5, 'C': 6, 'N'
     'Bk': 97, 'Cf': 98, 'Es': 99, 'Fm': 100, 'Md': 101, 'No': 102, 'Lr': 103, 'Rf': 104, 'Db': 105, 'Sg': 106, 'Bh': 107, 'Hs': 108, 'Mt': 109, 'Ds': 110, 'Rg': 111,\
      'Cn': 112, 'Nh': 113, 'Fl': 114, 'Mc': 115, 'Lv': 116, 'Ts': 117, 'Og': 118}
 
-
 def _read_energy(ener_file, frame):
     # load full file into cache once for fast access of lines
     if not path.exists(ener_file):
@@ -36,15 +35,19 @@ def _frame_loader(frame):
     if len(elems) != ts['natoms']: # check if elem list and atoms in trr match
         raise ValueError("Number of atoms in TRR and MPT not equal! In TRR: "+str(len(trr.atoms))+", in MPT:"+str(len(elems)))
     
-    coords = ts['x']
-    forces = ts['f']
-    cell = ts['box']
+    coords = np.float32(ts['x']*10)
+    forces = np.float32(ts['f']/10)
+    cell = np.float32(ts['box']*10)
     
     energy = _read_energy(ener_file, i)
         
     data = {'coord': coords, 'cell': cell, 'elems': elems,
             'e_data': energy, 'f_data': forces}
     return data
+    
+def _get_cell(dim):
+    # neglect box angle info, assume all 90 degrees, need to include angles also
+    return np.asarray([[dim[0], 0, 0], [0, dim[1], 0], [0, 0, dim[2]]])
 
 def _load_single_set(mpt_file, trr_file, ener_file):
     n = get_trr_frames(trr_file)
