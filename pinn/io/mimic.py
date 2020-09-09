@@ -44,10 +44,6 @@ def _frame_loader(frame):
     data = {'coord': coords, 'cell': cell, 'elems': elems,
             'e_data': energy, 'f_data': forces}
     return data
-    
-def _get_cell(dim):
-    # neglect box angle info, assume all 90 degrees, need to include angles also
-    return np.asarray([[dim[0], 0, 0], [0, dim[1], 0], [0, 0, dim[2]]])
 
 def _load_single_set(mpt_file, trr_file, ener_file):
     n = get_trr_frames(trr_file)
