@@ -38,7 +38,7 @@ def _frame_loader(frame):
 
     # Convert nm to Angstrom.
     coords = np.float32(ts['x']*10)
-    forces = np.float32(ts['f']*10)
+    forces = np.float32(ts['f']/10)
     cell = np.float32(ts['box']*10)
     
     energy = _read_energy(ener_file, i)
