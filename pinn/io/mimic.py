@@ -35,10 +35,11 @@ def _frame_loader(frame):
     
     if len(elems) != ts['natoms']: # check if elem list and atoms in trr match
         raise ValueError("Number of atoms in TRR and MPT not equal! In TRR: "+str(len(trr.atoms))+", in MPT:"+str(len(elems)))
-    
-    coords = ts['x']
-    forces = ts['f']
-    cell = ts['box']
+
+    # Convert nm to Angstrom.
+    coords = np.float32(ts['x']*10)
+    forces = np.float32(ts['f']*10)
+    cell = np.float32(ts['box']*10)
     
     energy = _read_energy(ener_file, i)
         
