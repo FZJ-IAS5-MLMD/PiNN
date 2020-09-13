@@ -2,6 +2,7 @@
 
 import struct
 import numpy as np
+import os.path
 
 GROMACS_MAGIC = 1993
 DIM = 3
@@ -22,7 +23,8 @@ class TRRReader():
         self.__header = None
         
     def close(self):
-        self.__fileh.close()
+        if hasattr(self, '__fileh'):
+             self.__fileh.close()
         
     def __del__(self):
         self.close()
