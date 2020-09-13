@@ -4,7 +4,37 @@
 import tensorflow.compat.v1 as tf
 import numpy as np
 from functools import wraps
+import horovod.tensorflow as hvd
 
+def hvd_init():
+    try:
+        hvd.size()
+    except ValueError:
+        hvd.init()
+
+def parallelize_model(model_dir, params, kwargs):
+    hvd_init()
+    
+    model_dir = model_dir if hvd.rank() == 0 else None
+    
+    model_params = params['model_params']
+    
+    model_params['learning_rate'] *= hvd.size()
+    
+    if 'training_hooks' not in model_params: model_params['training_hooks'] = []
+    model_params['training_hooks'].append( hvd.BroadcastGlobalVariablesHook(0) )
+    
+    if 'optimizer' not in model_params: model_params['optimizer'] = tf.train.AdamOptimizer(model_params['learning_rate'])
+    model_params['optimizer'] = hvd.DistributedOptimizer(model_params['optimizer'])
+    
+    if 'config' not in kwargs:
+        kwargs['config'] = tf.estimator.RunConfig()
+        
+    kwargs['config'].session_config.gpu_options.visible_device_list = str(hvd.local_rank())
+    
+    params['model_params'] = model_params
+    
+    return model_dir, params, kwargs
 
 def get_atomic_dress(dataset, elems, max_iter=None):
     """Fit the atomic energy with a element dependent atomic dress

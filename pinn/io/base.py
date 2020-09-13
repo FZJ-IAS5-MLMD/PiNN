@@ -3,7 +3,22 @@
 
 import random
 import tensorflow.compat.v1 as tf
+import horovod.tensorflow as hvd
+from pinn.utils import hvd_init, hvd
 
+def distribute_data(*args):
+    def chunkify(a, n):
+        if n > len(a): raise IndexError("List of size {0} cannot be split into {1} chunks".format(len(a), n))
+        j, k = len(a)//n, len(a)%n
+        return [a[i * j + min(i, k):(i + 1) * j + min(i + 1, k)] for i in range(n)]
+    
+    chunked_data = []
+    
+    hvd_init()
+    
+    chunked_data = [chunkify( a, hvd.size() )[ hvd.rank() ] for a in args]
+        
+    return chunked_data
 
 class _datalist(list):
     """The same thing as list, but don't count in nested structure

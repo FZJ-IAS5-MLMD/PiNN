@@ -110,8 +110,14 @@ def _dipole_model_fn(features, labels, mode, params):
         loss, metrics = _get_loss(features, dipole, charge, model_params)
         _make_train_summary(metrics)
         train_op = _get_train_op(loss,  model_params)
+        
+        if 'training_hooks' in model_params:
+            training_hooks = model_params['training_hooks']
+        else:
+            training_hooks = []
+            
         return tf.estimator.EstimatorSpec(
-            mode, loss=loss, train_op=train_op)
+            mode, loss=loss, train_op=train_op, training_hooks=training_hooks)
 
     if mode == tf.estimator.ModeKeys.EVAL:
         loss, metrics = _get_loss(features, dipole, charge, model_params)
@@ -266,7 +272,12 @@ def _get_train_op(loss, model_params):
             learning_rate, global_step,
             model_params['decay_step'], model_params['decay_rate'],
             staircase=True)
-    optimizer = tf.train.AdamOptimizer(learning_rate)
+            
+    if 'optimizer' in model_params:
+        optimizer = model_params['optimizer']
+    else:
+        optimizer = tf.train.AdamOptimizer(learning_rate)
+        
     # Get the gradients
     tvars = tf.trainable_variables()
     grads = tf.gradients(loss, tvars)
