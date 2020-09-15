@@ -29,12 +29,13 @@ def parallelize_model(model_dir, params, kwargs):
     
     if 'config' not in kwargs:
         kwargs['config'] = tf.estimator.RunConfig()
-        
+
     kwargs['config'].session_config.gpu_options.visible_device_list = str(hvd.local_rank())
     
     params['model_params'] = model_params
     
     return model_dir, params, kwargs
+
 
 def get_atomic_dress(dataset, elems, max_iter=None):
     """Fit the atomic energy with a element dependent atomic dress
@@ -158,6 +159,43 @@ def connect_dist_grad(tensors):
     if 'dist' in tensors:
         # dist can be deleted if the jacobian is cached, so we may skip this
         tensors['dist'] = _connect_dist_grad(tensors['diff'], tensors['dist'])
+
+
+def preprocess_dataset_neighbor_list(tensors, rc=5.0):
+    """Generates a function that can be ``Dataset.map``ped to precompute neighbor list.
+
+    The tensors dictionary is modified in-place. ``rc`` is the radius
+    cutoff in angstrom.
+
+    Examples
+    --------
+    Dataset.map(preprocess_dataset_neighbor_list)
+
+    """
+    from pinn.layers import cell_list_nl
+
+    # This enables to precompute neighbor list even before calling sparse_batch().
+    if 'ind_1' not in tensors:
+        # Create a shallow copy of tensors that we can modify before feeding it to cell_list_nl.
+        tensors_copy = tensors.copy()
+
+        # Create a fake 'ind_1' index so that we can use the cell_list_nl layer.
+        # 'elems' has shape (n_atoms,) while 'ind_1' needs to be (n_atoms, 1).
+        tensors_copy['ind_1'] = tf.expand_dims(tf.zeros_like(tensors_copy['elems']), axis=-1)
+
+        if 'cell' in tensors:
+            # Add a fake batch dimension. 'cell' is not touched by sparsify
+            # so its batch dimension correspond to the number of frames.
+            tensors_copy['cell'] = tf.expand_dims(tensors_copy['cell'], 0)
+    else:
+        tensors_copy = tensors
+
+    # Compute the neighbor list.
+    result = cell_list_nl(tensors_copy, rc=rc)
+
+    # Update the original dictionary.
+    tensors.update(result)
+    return tensors
 
 
 @tf.custom_gradient
