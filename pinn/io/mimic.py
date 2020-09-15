@@ -5,7 +5,6 @@ import mimicpy
 from mimicpy.parsers.mpt import MPT
 from pinn.io import list_loader
 from pinn.io.trr import check_trr, read_trr, get_trr_frames
-from pinn.utils import hvd
 
 # from ase
 atomic_numbers = {'X': 0, 'H': 1, 'He': 2, 'Li': 3, 'Be': 4, 'B': 5, 'C': 6, 'N': 7, 'O': 8, 'F': 9, 'Ne': 10, 'Na': 11, 'Mg': 12, 'Al': 13, 'Si': 14, 'P': 15,\

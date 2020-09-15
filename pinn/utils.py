@@ -4,16 +4,21 @@
 import tensorflow.compat.v1 as tf
 import numpy as np
 from functools import wraps
-import horovod.tensorflow as hvd
 
-def hvd_init():
+def get_hvd():
+    try:
+        import horovod.tensorflow as hvd
+    except ImportError as e:
+        raise type(e)('Horovod package with tensoflow support must be installed to run parallel training').with_traceback(sys.exc_info()[2])
+ 
     try:
         hvd.size()
     except ValueError:
         hvd.init()
+    return hvd
 
 def parallelize_model(model_dir, params, kwargs):
-    hvd_init()
+    hvd = get_hvd()
     
     model_dir = model_dir if hvd.rank() == 0 else None
     

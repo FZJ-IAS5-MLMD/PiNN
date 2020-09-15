@@ -3,8 +3,7 @@
 
 import random
 import tensorflow.compat.v1 as tf
-import horovod.tensorflow as hvd
-from pinn.utils import hvd_init, hvd
+from pinn.utils import get_hvd
 
 def distribute_data(*args):
     def chunkify(a, n):
@@ -14,7 +13,7 @@ def distribute_data(*args):
     
     chunked_data = []
     
-    hvd_init()
+    hvd = get_hvd()
     
     chunked_data = [chunkify( a, hvd.size() )[ hvd.rank() ] for a in args]
         
