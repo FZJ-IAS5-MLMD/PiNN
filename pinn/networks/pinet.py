@@ -102,6 +102,28 @@ def en_layer(nodes, n_nodes, act='tanh'):
     return tf.squeeze(nodes, -1)
 
 
+def preprocess_dataset_pinet(tensors, rc=4.0, atom_types=(1, 6, 7, 8)):
+    """A function that can be ``Dataset.map``ped to precompute neighbor list and one-hot embeddings.
+
+    The tensors dictionary is modified in-place. ``rc`` is the radius
+    cutoff in angstrom, and ``atom_types`` is a list of atom numbers
+    to be included in the encoding.
+
+    Examples
+    --------
+    Dataset.map(preprocess_dataset_pinet)
+
+    """
+    from pinn.utils import preprocess_dataset_neighbor_list
+
+    # First, compute the neighbor list.
+    tensors = preprocess_dataset_neighbor_list(tensors, rc=rc)
+
+    # Now the one-hot embedding.
+    tensors['embed'] = atomic_onehot(tensors['elems'], list(atom_types))
+    return tensors
+
+
 def pinet(tensors, pp_nodes=[16, 16], pi_nodes=[16, 16],
           ii_nodes=[16, 16], en_nodes=[16, 16], depth=4,
           atom_types=[1, 6, 7, 8],  act='tanh',
@@ -131,13 +153,13 @@ def pinet(tensors, pp_nodes=[16, 16], pi_nodes=[16, 16],
         prediction or preprocessed tensor dictionary
     """
     if "ind_2" not in tensors:
-        tensors.update(cell_list_nl(tensors, rc))
+        tensors = preprocess_dataset_pinet(tensors, rc=rc, atom_types=atom_types)
         connect_dist_grad(tensors)
-        tensors['embed'] = atomic_onehot(tensors['elems'], atom_types)
         if preprocess:
             return tensors
     else:
         connect_dist_grad(tensors)
+
     # Basis function
     if basis_type == 'polynomial':
         basis = polynomial_basis(tensors['dist'], cutoff_type, rc, n_basis)
